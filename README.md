@@ -12,9 +12,9 @@ irm "https://github.com/rvanbalen/powershell-profile/raw/main/setup.ps1" | iex
 
 ## 🛠️ Fix the Missing Font
 
-After running the script, you'll find a downloaded `cove.zip` file in the folder you executed the script from. Follow these steps to install the required nerd fonts:
+After running the script, you'll find a downloaded `hack.zip` file in the folder you executed the script from. Follow these steps to install the required nerd fonts:
 
-1. Extract the `cove.zip` file.
+1. Extract the `hack.zip` file.
 2. Locate and install the nerd fonts.
 
 ## Customize this profile
