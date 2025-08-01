@@ -410,6 +410,19 @@ function lazyg {
     git push
 }
 
+function y {
+    $tmp = [System.IO.Path]::GetTempFileName()
+    & yazi @args --cwd-file=$tmp
+
+    if (Test-Path $tmp) {
+        $cwd = Get-Content -Raw -Path $tmp
+        if ($cwd -and $cwd -ne $PWD.Path) {
+            Set-Location -Path $cwd
+        }
+        Remove-Item -Force -Path $tmp
+    }
+}
+
 # Quick Access to System Information
 function sysinfo { Get-ComputerInfo }
 
