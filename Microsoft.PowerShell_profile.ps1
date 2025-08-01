@@ -369,6 +369,9 @@ function trash($path) {
 
 ### Quality of Life Aliases
 
+# Lazygit
+Set-Alias -Name lg -Value lazygit -Force
+
 # Navigation Shortcuts
 function docs {
     $docs = if(([Environment]::GetFolderPath("MyDocuments"))) {([Environment]::GetFolderPath("MyDocuments"))} else {$HOME + "\Documents"}
@@ -493,7 +496,7 @@ $scriptblock = {
         'npm' = @('install', 'start', 'run', 'test', 'build')
         'deno' = @('run', 'compile', 'bundle', 'test', 'lint', 'fmt', 'cache', 'info', 'doc', 'upgrade')
     }
-    
+
     $command = $commandAst.CommandElements[0].Value
     if ($customCompletions.ContainsKey($command)) {
         $customCompletions[$command] | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
