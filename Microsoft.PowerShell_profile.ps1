@@ -196,12 +196,12 @@ function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip).Content }
 
 # Open WinUtil full-release
 function winutil {
-	irm https://christitus.com/win | iex
+	Invoke-RestMethod https://christitus.com/win | Invoke-Expression
 }
 
 # Open WinUtil pre-release
 function winutildev {
-	irm https://christitus.com/windev | iex
+	Invoke-RestMethod https://christitus.com/windev | Invoke-Expression
 }
 
 # System Utilities
@@ -222,7 +222,7 @@ function uptime {
         # find date/time format
         $dateFormat = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.ShortDatePattern
         $timeFormat = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.LongTimePattern
-		
+
         # check powershell version
         if ($PSVersionTable.PSVersion.Major -eq 5) {
             $lastBoot = (Get-WmiObject win32_operatingsystem).LastBootUpTime
@@ -256,7 +256,7 @@ function uptime {
     }
 }
 
-function reload-profile {
+function Reload-Profile {
     & $profile
 }
 
@@ -370,12 +370,12 @@ function trash($path) {
 ### Quality of Life Aliases
 
 # Navigation Shortcuts
-function docs { 
+function docs {
     $docs = if(([Environment]::GetFolderPath("MyDocuments"))) {([Environment]::GetFolderPath("MyDocuments"))} else {$HOME + "\Documents"}
     Set-Location -Path $docs
 }
-    
-function dtop { 
+
+function dtop {
     $dtop = if ([Environment]::GetFolderPath("Desktop")) {[Environment]::GetFolderPath("Desktop")} else {$HOME + "\Documents"}
     Set-Location -Path $dtop
 }
