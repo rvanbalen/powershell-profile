@@ -379,15 +379,14 @@ function la { Get-ChildItem -Force | Format-Table -AutoSize }
 function ll { Get-ChildItem | Format-Table -AutoSize }
 
 function y {
-    $tmp = [System.IO.Path]::GetTempFileName()
-    & yazi @args --cwd-file=$tmp
-
+    $tmp = (New-TemporaryFile).FullName
+    yazi @args --cwd-file="$tmp"
     if (Test-Path $tmp) {
-        $cwd = Get-Content -Raw -Path $tmp
-        if ($cwd -and $cwd -ne $PWD.Path) {
-            Set-Location -Path $cwd
+        $cwd = Get-Content -Path $tmp
+        if (-not [String]::IsNullOrEmpty($cwd) -and $cwd -ne $PWD.Path) {
+            Set-Location -LiteralPath (Resolve-Path -LiteralPath $cwd).Path
         }
-        Remove-Item -Force -Path $tmp
+        Remove-Item -Path $tmp
     }
 }
 
