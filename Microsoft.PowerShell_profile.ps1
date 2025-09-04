@@ -378,29 +378,6 @@ function k9 { Stop-Process -Name $args[0] }
 function la { Get-ChildItem -Force | Format-Table -AutoSize }
 function ll { Get-ChildItem | Format-Table -AutoSize }
 
-# Git Shortcuts
-function gs { git status }
-
-function ga { git add . }
-
-function gc { param($m) git commit -m "$m" }
-
-function gp { git push }
-
-function g { __zoxide_z github }
-
-function gcl { git clone "$args" }
-
-function gcom {
-    git add .
-    git commit -m "$args"
-}
-function lazyg {
-    git add .
-    git commit -m "$args"
-    git push
-}
-
 function y {
     $tmp = [System.IO.Path]::GetTempFileName()
     & yazi @args --cwd-file=$tmp
