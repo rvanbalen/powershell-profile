@@ -67,12 +67,15 @@ function Update-Profile {
         if ($newhash.Hash -ne $oldhash.Hash) {
             Copy-Item -Path "$env:temp/Microsoft.PowerShell_profile.ps1" -Destination $PROFILE -Force
             Write-Host "Profile has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
-        } else {
+        }
+        else {
             Write-Host "Profile is up to date." -ForegroundColor Green
         }
-    } catch {
+    }
+    catch {
         Write-Error "Unable to check for `$profile updates: $_"
-    } finally {
+    }
+    finally {
         Remove-Item "$env:temp/Microsoft.PowerShell_profile.ps1" -ErrorAction SilentlyContinue
     }
 }
@@ -80,14 +83,15 @@ function Update-Profile {
 # Check if not in debug mode AND (updateInterval is -1 OR file doesn't exist OR time difference is greater than the update interval)
 if (-not $debug -and `
     ($updateInterval -eq -1 -or `
-      -not (Test-Path $timeFilePath) -or `
-      ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
+            -not (Test-Path $timeFilePath) -or `
+        ((Get-Date) - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null)).TotalDays -gt $updateInterval)) {
 
     Update-Profile
     $currentTime = Get-Date -Format 'yyyy-MM-dd'
     $currentTime | Out-File -FilePath $timeFilePath
 
-} elseif ($debug) {
+}
+elseif ($debug) {
     Write-Warning "Skipping profile update check in debug mode"
 }
 
@@ -107,10 +111,12 @@ function Update-PowerShell {
             Write-Host "Updating PowerShell..." -ForegroundColor Yellow
             Start-Process powershell.exe -ArgumentList "-NoProfile -Command winget upgrade Microsoft.PowerShell --accept-source-agreements --accept-package-agreements" -Wait -NoNewWindow
             Write-Host "PowerShell has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
-        } else {
+        }
+        else {
             Write-Host "Your PowerShell is up to date." -ForegroundColor Green
         }
-    } catch {
+    }
+    catch {
         Write-Error "Failed to update PowerShell. Error: $_"
     }
 }
@@ -119,13 +125,14 @@ function Update-PowerShell {
 # Check if not in debug mode AND (updateInterval is -1 OR file doesn't exist OR time difference is greater than the update interval)
 if (-not $debug -and `
     ($updateInterval -eq -1 -or `
-     -not (Test-Path $timeFilePath) -or `
-     ((Get-Date).Date - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null).Date).TotalDays -gt $updateInterval)) {
+            -not (Test-Path $timeFilePath) -or `
+        ((Get-Date).Date - [datetime]::ParseExact((Get-Content -Path $timeFilePath), 'yyyy-MM-dd', $null).Date).TotalDays -gt $updateInterval)) {
 
     Update-PowerShell
     $currentTime = Get-Date -Format 'yyyy-MM-dd'
     $currentTime | Out-File -FilePath $timeFilePath
-} elseif ($debug) {
+}
+elseif ($debug) {
     Write-Warning "Skipping PowerShell update in debug mode"
 }
 
@@ -169,13 +176,13 @@ function Test-CommandExists {
 
 # Editor Configuration
 $EDITOR = if (Test-CommandExists nvim) { 'nvim' }
-          elseif (Test-CommandExists pvim) { 'pvim' }
-          elseif (Test-CommandExists vim) { 'vim' }
-          elseif (Test-CommandExists vi) { 'vi' }
-          elseif (Test-CommandExists code) { 'code' }
-          elseif (Test-CommandExists notepad++) { 'notepad++' }
-          elseif (Test-CommandExists sublime_text) { 'sublime_text' }
-          else { 'notepad' }
+elseif (Test-CommandExists pvim) { 'pvim' }
+elseif (Test-CommandExists vim) { 'vim' }
+elseif (Test-CommandExists vi) { 'vi' }
+elseif (Test-CommandExists code) { 'code' }
+elseif (Test-CommandExists notepad++) { 'notepad++' }
+elseif (Test-CommandExists sublime_text) { 'sublime_text' }
+else { 'notepad' }
 Set-Alias -Name vim -Value $EDITOR
 
 # Quick Access to Editing the Profile
@@ -186,7 +193,7 @@ Set-Alias -Name ep -Value Edit-Profile
 
 function touch($file) { "" | Out-File $file -Encoding ASCII }
 function ff($name) {
-    Get-ChildItem -recurse -filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
+    Get-ChildItem -Recurse -Filter "*${name}*" -ErrorAction SilentlyContinue | ForEach-Object {
         Write-Output "$($_.FullName)"
     }
 }
@@ -196,12 +203,12 @@ function Get-PubIP { (Invoke-WebRequest http://ifconfig.me/ip).Content }
 
 # Open WinUtil full-release
 function winutil {
-	Invoke-RestMethod https://christitus.com/win | Invoke-Expression
+    Invoke-RestMethod https://christitus.com/win | Invoke-Expression
 }
 
 # Open WinUtil pre-release
 function winutildev {
-	Invoke-RestMethod https://christitus.com/windev | Invoke-Expression
+    Invoke-RestMethod https://christitus.com/windev | Invoke-Expression
 }
 
 # System Utilities
@@ -209,7 +216,8 @@ function admin {
     if ($args.Count -gt 0) {
         $argList = $args -join ' '
         Start-Process wt -Verb runAs -ArgumentList "pwsh.exe -NoExit -Command $argList"
-    } else {
+    }
+    else {
         Start-Process wt -Verb runAs
     }
 }
@@ -230,7 +238,8 @@ function uptime {
 
             # reformat lastBoot
             $lastBoot = $bootTime.ToString("$dateFormat $timeFormat")
-        } else {
+        }
+        else {
             $lastBoot = net statistics workstation | Select-String "since" | ForEach-Object { $_.ToString().Replace('Statistics since ', '') }
             $bootTime = [System.DateTime]::ParseExact($lastBoot, "$dateFormat $timeFormat", [System.Globalization.CultureInfo]::InvariantCulture)
         }
@@ -251,7 +260,8 @@ function uptime {
         # Uptime output
         Write-Host ("Uptime: {0} days, {1} hours, {2} minutes, {3} seconds" -f $days, $hours, $minutes, $seconds) -ForegroundColor Blue
 
-    } catch {
+    }
+    catch {
         Write-Error "An error occurred while retrieving system uptime."
     }
 }
@@ -265,42 +275,17 @@ function unzip ($file) {
     $fullFile = Get-ChildItem -Path $pwd -Filter $file | ForEach-Object { $_.FullName }
     Expand-Archive -Path $fullFile -DestinationPath $pwd
 }
-function hb {
-    if ($args.Length -eq 0) {
-        Write-Error "No file path specified."
-        return
-    }
 
-    $FilePath = $args[0]
-
-    if (Test-Path $FilePath) {
-        $Content = Get-Content $FilePath -Raw
-    } else {
-        Write-Error "File path does not exist."
-        return
-    }
-
-    $uri = "http://bin.christitus.com/documents"
-    try {
-        $response = Invoke-RestMethod -Uri $uri -Method Post -Body $Content -ErrorAction Stop
-        $hasteKey = $response.key
-        $url = "http://bin.christitus.com/$hasteKey"
-	Set-Clipboard $url
-        Write-Output $url
-    } catch {
-        Write-Error "Failed to upload the document. Error: $_"
-    }
-}
 function grep($regex, $dir) {
     if ( $dir ) {
-        Get-ChildItem $dir | select-string $regex
+        Get-ChildItem $dir | Select-String $regex
         return
     }
-    $input | select-string $regex
+    $input | Select-String $regex
 }
 
 function df {
-    get-volume
+    Get-Volume
 }
 
 function sed($file, $find, $replace) {
@@ -312,7 +297,7 @@ function which($name) {
 }
 
 function export($name, $value) {
-    set-item -force -path "env:$name" -value $value;
+    Set-Item -Force -Path "env:$name" -Value $value;
 }
 
 function pkill($name) {
@@ -324,13 +309,13 @@ function pgrep($name) {
 }
 
 function head {
-  param($Path, $n = 10)
-  Get-Content $Path -Head $n
+    param($Path, $n = 10)
+    Get-Content $Path -Head $n
 }
 
 function tail {
-  param($Path, $n = 10, [switch]$f = $false)
-  Get-Content $Path -Tail $n -Wait:$f
+    param($Path, $n = 10, [switch]$f = $false)
+    Get-Content $Path -Tail $n -Wait:$f
 }
 
 # Quick File Creation
@@ -346,9 +331,10 @@ function trash($path) {
         $item = Get-Item $fullPath
 
         if ($item.PSIsContainer) {
-          # Handle directory
+            # Handle directory
             $parentPath = $item.Parent.FullName
-        } else {
+        }
+        else {
             # Handle file
             $parentPath = $item.DirectoryName
         }
@@ -359,10 +345,12 @@ function trash($path) {
         if ($item) {
             $shellItem.InvokeVerb('delete')
             Write-Host "Item '$fullPath' has been moved to the Recycle Bin."
-        } else {
+        }
+        else {
             Write-Host "Error: Could not find the item '$fullPath' to trash."
         }
-    } else {
+    }
+    else {
         Write-Host "Error: Item '$fullPath' does not exist."
     }
 }
@@ -374,12 +362,12 @@ Set-Alias -Name lg -Value lazygit -Force
 
 # Navigation Shortcuts
 function docs {
-    $docs = if(([Environment]::GetFolderPath("MyDocuments"))) {([Environment]::GetFolderPath("MyDocuments"))} else {$HOME + "\Documents"}
+    $docs = if (([Environment]::GetFolderPath("MyDocuments"))) { ([Environment]::GetFolderPath("MyDocuments")) } else { $HOME + "\Documents" }
     Set-Location -Path $docs
 }
 
 function dtop {
-    $dtop = if ([Environment]::GetFolderPath("Desktop")) {[Environment]::GetFolderPath("Desktop")} else {$HOME + "\Documents"}
+    $dtop = if ([Environment]::GetFolderPath("Desktop")) { [Environment]::GetFolderPath("Desktop") } else { $HOME + "\Documents" }
     Set-Location -Path $dtop
 }
 
@@ -431,8 +419,8 @@ function sysinfo { Get-ComputerInfo }
 
 # Networking Utilities
 function flushdns {
-	Clear-DnsClientCache
-	Write-Host "DNS has been flushed"
+    Clear-DnsClientCache
+    Write-Host "DNS has been flushed"
 }
 
 # Clipboard Utilities
@@ -443,24 +431,24 @@ function pst { Get-Clipboard }
 # Enhanced PowerShell Experience
 # Enhanced PSReadLine Configuration
 $PSReadLineOptions = @{
-    EditMode = 'Windows'
-    HistoryNoDuplicates = $true
+    EditMode                      = 'Windows'
+    HistoryNoDuplicates           = $true
     HistorySearchCursorMovesToEnd = $true
-    Colors = @{
-        Command = '#87CEEB'  # SkyBlue (pastel)
+    Colors                        = @{
+        Command   = '#87CEEB'  # SkyBlue (pastel)
         Parameter = '#98FB98'  # PaleGreen (pastel)
-        Operator = '#FFB6C1'  # LightPink (pastel)
-        Variable = '#DDA0DD'  # Plum (pastel)
-        String = '#FFDAB9'  # PeachPuff (pastel)
-        Number = '#B0E0E6'  # PowderBlue (pastel)
-        Type = '#F0E68C'  # Khaki (pastel)
-        Comment = '#D3D3D3'  # LightGray (pastel)
-        Keyword = '#8367c7'  # Violet (pastel)
-        Error = '#FF6347'  # Tomato (keeping it close to red for visibility)
+        Operator  = '#FFB6C1'  # LightPink (pastel)
+        Variable  = '#DDA0DD'  # Plum (pastel)
+        String    = '#FFDAB9'  # PeachPuff (pastel)
+        Number    = '#B0E0E6'  # PowderBlue (pastel)
+        Type      = '#F0E68C'  # Khaki (pastel)
+        Comment   = '#D3D3D3'  # LightGray (pastel)
+        Keyword   = '#8367c7'  # Violet (pastel)
+        Error     = '#FF6347'  # Tomato (keeping it close to red for visibility)
     }
-    PredictionSource = 'History'
-    PredictionViewStyle = 'ListView'
-    BellStyle = 'None'
+    PredictionSource              = 'History'
+    PredictionViewStyle           = 'ListView'
+    BellStyle                     = 'None'
 }
 Set-PSReadLineOption @PSReadLineOptions
 
@@ -492,8 +480,8 @@ Set-PSReadLineOption -MaximumHistoryCount 10000
 $scriptblock = {
     param($wordToComplete, $commandAst, $cursorPosition)
     $customCompletions = @{
-        'git' = @('status', 'add', 'commit', 'push', 'pull', 'clone', 'checkout')
-        'npm' = @('install', 'start', 'run', 'test', 'build')
+        'git'  = @('status', 'add', 'commit', 'push', 'pull', 'clone', 'checkout')
+        'npm'  = @('install', 'start', 'run', 'test', 'build')
         'deno' = @('run', 'compile', 'bundle', 'test', 'lint', 'fmt', 'cache', 'info', 'doc', 'upgrade')
     }
 
@@ -525,7 +513,8 @@ function Get-Theme {
             return
         }
         oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/cobalt2.omp.json | Invoke-Expression
-    } else {
+    }
+    else {
         oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/cobalt2.omp.json | Invoke-Expression
     }
 }
@@ -534,13 +523,15 @@ function Get-Theme {
 Get-Theme
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     Invoke-Expression (& { (zoxide init --cmd cd powershell | Out-String) })
-} else {
+}
+else {
     Write-Host "zoxide command not found. Attempting to install via winget..."
     try {
         winget install -e --id ajeetdsouza.zoxide
         Write-Host "zoxide installed successfully. Initializing..."
         Invoke-Expression (& { (zoxide init powershell | Out-String) })
-    } catch {
+    }
+    catch {
         Write-Error "Failed to install zoxide. Error: $_"
     }
 }
@@ -554,9 +545,11 @@ function Show-Help {
 $($PSStyle.Foreground.Cyan)PowerShell Profile Help$($PSStyle.Reset)
 $($PSStyle.Foreground.Yellow)=======================$($PSStyle.Reset)
 
+$($PSStyle.Foreground.Green)Update-PowerShell$($PSStyle.Reset) - Checks for the latest PowerShell release and updates if a new version is available.
+
 $($PSStyle.Foreground.Green)Update-Profile$($PSStyle.Reset) - Checks for profile updates from a remote repository and updates if necessary.
 
-$($PSStyle.Foreground.Green)Update-PowerShell$($PSStyle.Reset) - Checks for the latest PowerShell release and updates if a new version is available.
+$($PSStyle.Foreground.Green)Reload-Profile$($PSStyle.Reset) - Reloads the current user's PowerShell profile.
 
 $($PSStyle.Foreground.Green)Edit-Profile$($PSStyle.Reset) - Opens the current user's profile for editing using the configured editor.
 
@@ -572,11 +565,7 @@ $($PSStyle.Foreground.Green)winutildev$($PSStyle.Reset) - Runs the latest WinUti
 
 $($PSStyle.Foreground.Green)uptime$($PSStyle.Reset) - Displays the system uptime.
 
-$($PSStyle.Foreground.Green)reload-profile$($PSStyle.Reset) - Reloads the current user's PowerShell profile.
-
 $($PSStyle.Foreground.Green)unzip$($PSStyle.Reset) <file> - Extracts a zip file to the current directory.
-
-$($PSStyle.Foreground.Green)hb$($PSStyle.Reset) <file> - Uploads the specified file's content to a hastebin-like service and returns the URL.
 
 $($PSStyle.Foreground.Green)grep$($PSStyle.Reset) <regex> [dir] - Searches for a regex pattern in files within the specified directory or from the pipeline input.
 
