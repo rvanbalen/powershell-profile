@@ -21,7 +21,7 @@ function Install-NerdFonts {
     param (
         [string]$FontName = "Hack",
         [string]$FontDisplayName = "Hack Nerd Font",
-        [string]$Version = "3.3.0"
+        [string]$Version = "3.5.1"
     )
 
     try {
