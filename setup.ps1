@@ -109,6 +109,7 @@ catch {
 
 # Font Install
 Install-NerdFonts -FontName "Hack" -FontDisplayName "Hack Nerd Font"
+Install-NerdFonts -FontName "RobotoMono" -FontDisplayName "RobotoMono Nerd Font"
 
 # Final check and message to the user
 if ((Test-Path -Path $PROFILE) -and (winget list --name "OhMyPosh" -e) -and ($fontFamilies -contains "Hack NF")) {
